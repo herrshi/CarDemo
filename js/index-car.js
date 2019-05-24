@@ -124,7 +124,7 @@ require([
 
       if (this.car) {
         let posEst = this.computeCarPosition();
-        posEst[2] = 10;
+        // posEst[2] = 10;
 
         let renderPos = [0, 0, 0];
         externalRenderers.toRenderCoordinates(
@@ -137,14 +137,25 @@ require([
           1
         );
         this.car.position.set(renderPos[0], renderPos[1], renderPos[2]);
+
+        if (this.estHistory.length > 0 && !this.cameraPositionInitialized) {
+          this.cameraPositionInitialized = true;
+          view.goTo({
+            target: [posEst[0], posEst[1]],
+            zoom: 15
+          });
+        }
       }
 
       // Projection matrix can be copied directly
       this.camera.projectionMatrix.fromArray(cam.projectionMatrix);
 
-      view.environment.lighting.date = new Date(
-        this.estHistory[this.estHistory.length - 1].time * 1000
-      );
+      if (this.estHistory.length > 0) {
+        view.environment.lighting.date = new Date(
+          this.estHistory[this.estHistory.length - 1].time * 1000
+        );
+      }
+
       const l = context.sunLight;
       this.sun.position.set(l.direction[0], l.direction[1], l.direction[2]);
       this.sun.intensity = l.diffuse.intensity;
@@ -227,7 +238,7 @@ require([
         return [0, 0, 0];
       }
 
-      if (this.estHistory.length === 1) {
+      if (this.estHistory.length >= 1) {
         return this.estHistory[0].pos;
       }
     }
