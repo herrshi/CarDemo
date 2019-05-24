@@ -185,7 +185,7 @@ require([
       ///////////////////////////////////////////////////////////////////////////////////
       if (this.iss) {
         let posEst = this.computeISSPosition();
-        posEst[2] = 10;
+        // posEst[2] = 10;
 
         let renderPos = [0, 0, 0];
         externalRenderers.toRenderCoordinates(
@@ -275,7 +275,7 @@ require([
       }
 
       if (this.positionHistory.length === 1) {
-        const entry1 = this.positionHistory[this.positionHistory.length - 1];
+        const entry1 = this.positionHistory[0];
         return entry1.pos;
       }
 
