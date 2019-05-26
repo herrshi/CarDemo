@@ -150,6 +150,8 @@ require([
         }
       );
 
+
+
       // create the horizon model
       const mat = new THREE.MeshBasicMaterial({ color: 0x2194ce });
       mat.transparent = true;
