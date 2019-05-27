@@ -143,7 +143,7 @@ require([
       this.rayCaster = new THREE.Raycaster();
       view.container.addEventListener("click", event => {
         const mouse = new THREE.Vector2();
-        mouse.x = event.clientX / window.innerWidth * 2 - 1;
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
         this.rayCaster.setFromCamera(mouse, this.camera);
@@ -211,6 +211,7 @@ require([
           1
         );
         this.car.position.set(...renderPos);
+        //调整车头方向
         this.car.rotation.y = -angelEst;
 
         // posEst = [posEst[0], posEst[1], ];
@@ -319,6 +320,7 @@ require([
       let vel = [0, 0];
       const current = this.positionHistory[this.currentPointIndex];
       const next = this.positionHistory[this.currentPointIndex + 1];
+      //下次调用的时间
       const nextTime = next.time - current.time;
 
       if (this.estHistory.length > 0) {
@@ -355,7 +357,6 @@ require([
       }
 
       const now = Date.now() / 1000 - this.timeOffset;
-      // console.log(now);
       const entry1 = this.estHistory[this.estHistory.length - 1];
 
       if (!this.lastPosition) {
