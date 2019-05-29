@@ -18,7 +18,7 @@ require([
       baseLayers: [
         new TileLayer({
           url:
-            "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineCommunity/MapServer"
+            "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer"
         })
       ]
     }
@@ -39,6 +39,7 @@ require([
     }
   });
   view.environment.lighting.cameraTrackingEnabled = false;
+
 
   const issExternalRenderer = {
     renderer: null,
@@ -61,6 +62,8 @@ require([
     estHistory: [],
 
     region: null,
+
+    markerLine: null,
 
     rayCaster: null,
 
@@ -134,6 +137,13 @@ require([
         mat
       );
       this.scene.add(this.region);
+
+      this.markerLine = new THREE.Mesh(
+        new THREE.CylinderBufferGeometry(25, 25, 500, 32),
+        mat
+      );
+      this.markerLine.rotateX(Math.PI / 2);
+      this.scene.add(this.markerLine);
 
       this.loadCarTrack().then(() => {
         this.queryCarPosition();
@@ -215,20 +225,23 @@ require([
         this.car.rotation.y = -angelEst;
 
         // posEst = [posEst[0], posEst[1], ];
-        const transform = new THREE.Matrix4();
-        transform.fromArray(
-          externalRenderers.renderCoordinateTransformAt(
-            view,
-            posEst,
-            SpatialReference.WGS84,
-            new Array(16)
-          )
-        );
-        transform.decompose(
-          this.region.position,
-          this.region.quaternion,
-          this.region.scale
-        );
+        // const transform = new THREE.Matrix4();
+        // transform.fromArray(
+        //   externalRenderers.renderCoordinateTransformAt(
+        //     view,
+        //     posEst,
+        //     SpatialReference.WGS84,
+        //     new Array(16)
+        //   )
+        // );
+        // transform.decompose(
+        //   this.region.position,
+        //   this.region.quaternion,
+        //   this.region.scale
+        // );
+        this.region.position.set(...renderPos);
+
+        this.markerLine.position.set(renderPos[0], renderPos[1], 500);
 
         if (
           this.estHistory.length > 0 &&
@@ -290,7 +303,6 @@ require([
               const time = new Date(posInfoData[1]).getTime();
               if (index === 0) {
                 this.timeOffset = Math.round((Date.now() - time) / 1000);
-                console.log(this.timeOffset);
               }
               const pos = coordtransform.wgs84togcj02(
                 Number(posInfoData[2]),
@@ -406,5 +418,6 @@ require([
     }
   };
 
+  console.log(externalRenderers);
   externalRenderers.add(view, issExternalRenderer);
 });
